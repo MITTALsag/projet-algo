@@ -20,7 +20,7 @@ void fill_files(int len, char* files[])
 
     for (int i = 0; i<len; i++)
     {
-        FILE* current_file = fopen(files[i], "r");
+        FILE* current_file = fopen(files[i], "w");
         
         int nb_lines = 0;
         while (nb_lines != N)
