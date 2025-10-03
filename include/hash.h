@@ -12,7 +12,7 @@
 #define M 6 // taille mot de passe
 #define L 1000 // longueur chaine
 #define N 100000 // nb chaines par table
-#define R 10 // nb tables
+#define R 5 // nb tables
 
 #define SEED 0x0af380103007be01
 

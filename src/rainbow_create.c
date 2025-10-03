@@ -1,4 +1,4 @@
-// #include <hash.h>
+
 #include <rainbow_table.h>
 
 
