@@ -1,14 +1,21 @@
-// CORRECTION :
-
 #ifndef RAINBOW_TABLE_H
 #define RAINBOW_TABLE_H
 
 #include "hash.h"
 
-
+/* Type pour les mots de passe */
 typedef char Password[M+1];
 
+/* Type pointeur vers fonction de réduction */
+typedef void (*ReductionFunc)(pwhash,int ,int, Password, Password);
 
+/* Type pointeur vers fonction de hachage */
+typedef pwhash (*HashFunc)(const void *);
+
+
+/*=======================================================================================================*/
+
+/* Type pour les noeuds de la table */
 typedef struct Node 
 {
     Password pass0;
@@ -16,31 +23,51 @@ typedef struct Node
     struct Node* next;
 } Node;
 
+
+/*=======================================================================================================*/
+
+/* Type pour les tables de hachage */
 typedef struct Table 
 {
-    Node* buckets[N];  // Table de hachage avec chaînage
-    size_t size;
-    size_t capacity;
+    Node* buckets[N];  // Tableau de pointeurs vers les listes chaînées
+    size_t size;       // Nombre d'éléments dans la table
+    size_t capacity;   // Capacité maximale de la table
 } Table;
 
 
-/* Type pointeur vers fonction de réduction */
-typedef void (*ReductionFunc)(pwhash hash, Password result);
+/* Initialisation de la table */
+Table* init_table(void);
 
-/* Type pointeur vers fonction de hachage */
-typedef pwhash (*HashFunc)(const Password);
+/* Insertion d'un élément dans la table si l'élément n'existe pas déjà */
+int table_insert(Table* table, const Password pass0, const Password passL);
 
+
+/*=======================================================================================================*/
+
+/* Type pour la Rainbow Table */
 typedef struct RainbowTable 
 {
     Table* tables[R];                   // R tables
-    ReductionFunc reductions[L];        // L fonctions de réduction différentes
-    HashFunc hash[L];                   // L fonctions de hashage différentes
+    // ReductionFunc reductions[L];        // L fonctions de réduction différentes
+    ReductionFunc reductions;            // L fonctions de réduction différentes
+    HashFunc hash;                   // L fonctions de hashage différentes
 } RainbowTable;
 
-// Prototypes des fonctions
+/* Initialisation de la Rainbow Table */
 RainbowTable* init_rainbow_table(void);
 
 
+/* Applique la chaîne de hachage et réduction i fois*/
+void apply(const Password pass0, Password result, const RainbowTable* rt, int i);
+
+/* Insertion d'une table à un index spécifique */
+int rainbowtable_insert(RainbowTable* rt, Table* table, int index);
+
+/* Libération de la Rainbow Table */
 void free_rainbow_table(RainbowTable* rt);
+
+
+/*=======================================================================================================*/
+
 
 #endif

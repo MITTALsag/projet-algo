@@ -9,3 +9,18 @@ pwhash target_hash_function (const void *data) {
     while(p<e)h=h*r^*(p++);
     return(h=h*r+M,h^=h>>31,h*=r,h^=h>>31,h*=r,h^=h>>31,h*=r,h);
 }
+
+
+void reduction(uint64_t hash,int variation,int allowed_chars_length, char* allowed_chars, char* pass)
+{
+    if (!pass) return;
+
+
+    for (int i = 0; i < M; i++) 
+    {
+        pass[i] = allowed_chars[(hash+variation) % allowed_chars_length];
+        hash /= allowed_chars_length;
+    }
+    pass[M] = '\0';
+
+}

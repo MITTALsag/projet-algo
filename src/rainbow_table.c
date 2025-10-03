@@ -3,9 +3,7 @@
 
 /*=======================================================================================================*/
 
-
-
-// Création d'un nouveau nœud
+// Initialisation d'un nœud
 Node* init_node(const Password pass0, const Password passL) 
 {
     Node* new_node = (Node*)malloc(sizeof(Node));
@@ -90,8 +88,27 @@ Table* init_table(void)
     }
 
     table->size = 0;
+    table->capacity = N;
     
     return table;
+}
+
+// Recherche dans la table
+Node* table_find(const Table* table, const Password passL) 
+{
+    pwhash index = target_hash_function(passL) % table->capacity;
+
+    Node* current = table->buckets[index];
+    
+    while (current)
+    {
+        if (strcmp(current->passL, passL) == 0) 
+        {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;  // Non trouvé
 }
 
 
@@ -122,23 +139,6 @@ int table_insert(Table* table, const Password pass0, const Password passL)
     return -1; // Collision detecte
 }
 
-// Recherche dans la table
-Node* table_find(const Table* table, const Password passL) 
-{
-    pwhash index = target_hash_function(passL) % table->capacity;
-
-    Node* current = table->buckets[index];
-    
-    while (current)
-    {
-        if (strcmp(current->passL, passL) == 0) 
-        {
-            return current;
-        }
-        current = current->next;
-    }
-    return NULL;  // Non trouvé
-}
 
 // Libération de la table
 void free_table(Table** table_ptr) 
@@ -205,8 +205,9 @@ RainbowTable* init_rainbow_table(void)
     // TODO: Initialiser les fonctions de réduction et de hachage
     for (int i = 0; i < L; i++) 
     {
-        rt->reductions[i] = NULL;  // À initialiser plus tard
-        rt->hash[i] = NULL;        // À initialiser plus tard  
+
+        rt->reductions = reduction;  // À initialiser plus tard
+        rt->hash = target_hash_function;        // À initialiser plus tard  
     }
     
     return rt;
@@ -250,22 +251,22 @@ void free_rainbow_table(RainbowTable* rt)
     free(rt);
 }
 
-void apply(const Password pass0, Password result, const RainbowTable* rt)
+void apply(const Password pass0, Password result, const RainbowTable* rt, int i)
 {
     Password current_pass;
     strcpy(current_pass, pass0);
 
-    for (int i = 0; i < L; i++)
+    for (int j = 0; j < i; j++)
     {
         // Vérifier que les fonctions sont initialisées
-        if (rt->hash[i] == NULL || rt->reductions[i] == NULL) 
+        if (rt->hash == NULL || rt->reductions == NULL) 
         {
             // Gérer l'erreur ou utiliser des fonctions par défaut
             break;
         }
         
-        pwhash hash_value = rt->hash[i](current_pass);
-        rt->reductions[i](hash_value, current_pass);
+        pwhash hash_value = rt->hash(current_pass);
+        rt->reductions(hash_value, j, 26, "abcdefghijklmnopqrstuvwxyz", current_pass);
     }
     
     strcpy(result, current_pass);

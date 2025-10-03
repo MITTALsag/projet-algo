@@ -28,9 +28,16 @@ void fill_files(int len, char* files[])
             current_table = init_table();
             Password pass0;
             Password passL;
-            generate_random_password(current_pass);
 
-            apply(current_pass, passL, R);
+            if (len == R)
+                generate_random_password(pass0);
+            else
+            {
+                fscanf(current_file, "%s", pass0);
+                pass0[M] = '\0';
+            }
+
+            apply(pass0, passL, new_R, L);
 
             if(table_insert(current_table, pass0, passL) != -1)
             {
@@ -56,11 +63,8 @@ int main(int argc, char* argv[])
 
     int nb_files = argc - 1; // Sans le nom du programme
 
-    // Si il y a exactement R fichiers
-    if (nb_files == R)
-        fill_files(nb_files, argv+1);
-    else
-        fill_files_password(argv+1)
+    
+    fill_files(nb_files, argv+1);
 
 
     return 0;
