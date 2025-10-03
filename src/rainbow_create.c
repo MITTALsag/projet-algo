@@ -46,8 +46,9 @@ void fill_files(int len, char* files[])
             }
 
         }
-        rainbowtable_insert(new_R, current_table, i);
+        // rainbowtable_insert(new_R, current_table, i);
         fclose(current_file);
+        // free_table(&current_table);
     }
 
 }

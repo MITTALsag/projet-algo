@@ -38,6 +38,9 @@ typedef struct Table
 /* Initialisation de la table */
 Table* init_table(void);
 
+/* Recherche dans la table */
+void free_table(Table** table_ptr);
+
 /* Insertion d'un élément dans la table si l'élément n'existe pas déjà */
 int table_insert(Table* table, const Password pass0, const Password passL);
 
