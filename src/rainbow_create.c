@@ -16,7 +16,7 @@ void generate_random_password(Password password)
 void fill_files(int len, char* files[])
 {
     RainbowTable* new_R = init_rainbow_table();
-    Table* current_table;
+    Table* current_table = init_table();
 
     for (int i = 0; i<len; i++)
     {
@@ -25,7 +25,6 @@ void fill_files(int len, char* files[])
         int nb_lines = 0;
         while (nb_lines != N)
         {
-            current_table = init_table();
             Password pass0;
             Password passL;
 
@@ -50,6 +49,7 @@ void fill_files(int len, char* files[])
         fclose(current_file);
         free_table(&current_table);
     }
+    free_rainbow_table(new_R);
 
 }
 
