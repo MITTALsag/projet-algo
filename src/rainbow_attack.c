@@ -25,15 +25,15 @@ void attackme(char* files[], int len, char* attackme, char* result)
     {
 
         bool found = false; 
-        int i = 0;
+        int i = L-1;
 
-        while (i<L && !found)
+        while (i>=0 && !found)
         {
             Password passible_passL;
 
             rainbow->reductions(current_hash, i, 26, "abcdefghijklmnopqrstuvwxyz", passible_passL);
             
-            apply(passible_passL, passible_passL, rainbow, i+1, L-1);
+            apply(passible_passL, passible_passL, rainbow, i+1, L);
 
             // for (int j = 1; j<=i; j++)
             // {
@@ -57,7 +57,7 @@ void attackme(char* files[], int len, char* attackme, char* result)
                 fprintf(fresult, "%s", pass0);
             }
 
-            i++;
+            i--;
         }
 
         if (!found)
