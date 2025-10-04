@@ -24,7 +24,8 @@ void attackme(char* files[], int len, char* attackme, char* result)
     while(fscanf(attack, "%llX", &current_hash) != EOF)
     {
 
-        bool found = false; 
+        bool found = false;
+        char* pass0=NULL;
         int i = L-1;
 
         while (i>=0 && !found)
@@ -35,32 +36,23 @@ void attackme(char* files[], int len, char* attackme, char* result)
             
             apply(passible_passL, passible_passL, rainbow, i+1, L);
 
-            // for (int j = 1; j<=i; j++)
-            // {
-            //     current_hash = rainbow->hash(current_pass);
-            //     rainbow->reductions(current_hash, L-j, 26, "abcdefghijklmnopqrstuvwxyz", current_pass);
-            // }
+            pass0 = rainbow_find(rainbow, passible_passL);
 
-            char* pass0 = rainbow_find(rainbow, passible_passL);
-            Password candidate;
-
-            if (pass0)
-            {
-                found = true;
-
-                apply(pass0, candidate, rainbow, 0, i+1);
-                // for(int k = i+2; k<=L; k++)
-                // {
-                //     pwhash new_hash = rainbow->hash(pass0);
-                //     rainbow->reductions(new_hash, L-k, 26, "abcdefghijklmnopqrstuvwxyz", pass0);
-                // }
-                fprintf(fresult, "%s", pass0);
-            }
+            found = pass0!=NULL;
 
             i--;
         }
 
-        if (!found)
+        Password candidate;
+        if (found)
+        {
+            found = true;
+
+            apply(pass0, candidate, rainbow, 0, i+1);
+
+            fprintf(fresult, "%s", pass0);
+        }
+        else
             fprintf(fresult, "\n");
     } 
 
