@@ -45,9 +45,10 @@ void fill_files(int len, char* files[])
             }
 
         }
-        // rainbowtable_insert(new_R, current_table, i);
+        rainbowtable_insert(new_R, current_table);
         fclose(current_file);
-        free_table(&current_table);
+        // free_table(&current_table);
+        current_table = init_table();
     }
     free_rainbow_table(new_R);
 
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
 {
     if (argc < R+1)
     {   
-        printf("Utilisation :\n./rainbow_create fich_1.txt fich_2.txt ... fich_%d.txt [pass0.txt]\n", R);
+        printf("Utilisation :\n./rainbow_create fich_1.txt fich_2.txt ... fich_R.txt [pass0.txt]\n");
         printf("Ou les fich_i.txt seront remplies des couples pass0 passL. Et si il y a un %deme fichier les pass0 seront pris à partir de ce fichier\n", R+1);
         return 1;
     }

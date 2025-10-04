@@ -15,14 +15,14 @@ OBJ_ATTACK = $(SRC_ATTACK:.c=.o)
 OBJ_HASH_MANY = $(SRC_HASH_MANY:.c=.o)
 
 # Cibles principales
-all: rainbow_create 
+all: rainbow_create rainbow_attack
 
 # Liens des exécutables
 rainbow_create: $(OBJ_CREATE) $(OBJ_COMMON)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# rainbow_attack: $(OBJ_ATTACK) $(OBJ_COMMON)
-# 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+rainbow_attack: $(OBJ_ATTACK) $(OBJ_COMMON)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # hash_many: $(OBJ_HASH_MANY) $(OBJ_COMMON)
 # 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)

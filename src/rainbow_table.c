@@ -183,6 +183,23 @@ void print_table(const Table* table)
 }
 
 
+Table* create_table(char* file)
+{
+    FILE* fi = fopen(file, "r");
+    char pass0[M + 1], passL[M + 1];  
+
+    Table* new_table = init_table();
+
+    while (fscanf(fi, "%s %s", pass0, passL) == 2) 
+    { 
+        table_insert(new_table, pass0, passL);
+    }
+    fclose(fi);
+
+    return new_table;
+}
+
+
 
 /*=======================================================================================================*/
 
@@ -202,32 +219,33 @@ RainbowTable* init_rainbow_table(void)
         rt->tables[i] = NULL;  // Pas encore créées
     }
     
-    // TODO: Initialiser les fonctions de réduction et de hachage
+    // Initialiser les fonctions de réduction et de hachage
     for (int i = 0; i < L; i++) 
     {
 
-        rt->reductions = reduction;  // À initialiser plus tard
-        rt->hash = target_hash_function;        // À initialiser plus tard  
+        rt->reductions = reduction;  
+        rt->hash = target_hash_function;       
     }
-    
+    rt->idx = 0;
     return rt;
 }
 
 // Insertion d'une table à un index spécifique
-int rainbowtable_insert(RainbowTable* rt, Table* table, int index)
+int rainbowtable_insert(RainbowTable* rt, Table* table)
 {
-    if (!rt || !table || index < 0 || index >= R) 
+    if (!rt || !table) 
     {
         return -1;  // Erreur de paramètres
     }
     
     // Vérifier si l'index est déjà occupé
-    if (rt->tables[index])  //  != NULL
+    if (rt->tables[rt->idx])  //  != NULL
     {
         return -2;  // Index déjà utilisé
     }
     
-    rt->tables[index] = table;
+    rt->tables[rt->idx] = table;
+    rt->idx++;
     return 0;  // Succès
 }
 
@@ -270,4 +288,24 @@ void apply(const Password pass0, Password result, const RainbowTable* rt, int i)
     }
     
     strcpy(result, current_pass);
+}
+
+
+char* rainbow_find(RainbowTable* rt, Password passL)
+{
+    Node* candidate;
+    for (int i = 0; i<rt->idx; i++)
+    {
+        Table* current_table = rt->tables[i];
+
+        candidate = table_find(current_table, passL);
+
+        if (candidate)
+        {
+            return candidate->pass0;
+        }
+
+    }
+
+    return NULL;
 }

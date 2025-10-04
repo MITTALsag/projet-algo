@@ -44,6 +44,8 @@ void free_table(Table** table_ptr);
 /* Insertion d'un élément dans la table si l'élément n'existe pas déjà */
 int table_insert(Table* table, const Password pass0, const Password passL);
 
+Table* create_table(char* file);
+
 
 /*=======================================================================================================*/
 
@@ -51,6 +53,7 @@ int table_insert(Table* table, const Password pass0, const Password passL);
 typedef struct RainbowTable 
 {
     Table* tables[R];                   // R tables
+    int idx;
     // ReductionFunc reductions[L];        // L fonctions de réduction différentes
     ReductionFunc reductions;            // L fonctions de réduction différentes
     HashFunc hash;                   // L fonctions de hashage différentes
@@ -64,10 +67,12 @@ RainbowTable* init_rainbow_table(void);
 void apply(const Password pass0, Password result, const RainbowTable* rt, int i);
 
 /* Insertion d'une table à un index spécifique */
-int rainbowtable_insert(RainbowTable* rt, Table* table, int index);
+int rainbowtable_insert(RainbowTable* rt, Table* table);
 
 /* Libération de la Rainbow Table */
 void free_rainbow_table(RainbowTable* rt);
+
+char* rainbow_find(RainbowTable* rt, Password passL);
 
 
 /*=======================================================================================================*/
