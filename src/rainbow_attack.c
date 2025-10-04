@@ -50,7 +50,7 @@ void attackme(char* files[], int len, char* attackme, char* result)
 
             apply(pass0, candidate, rainbow, 0, i+1);
 
-            fprintf(fresult, "%s", pass0);
+            fprintf(fresult, "%s\n", pass0);
         }
         else
             fprintf(fresult, "\n");
