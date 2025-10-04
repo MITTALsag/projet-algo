@@ -280,7 +280,7 @@ void apply(const Password pass0, Password result, const RainbowTable* rt, int i,
         if (rt->hash == NULL || rt->reductions == NULL) 
         {
             printf("la fonction de hashage ou de reduction n'est pas dans la rainbowtable.\n");
-            EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
         
         pwhash hash_value = rt->hash(current_pass);
