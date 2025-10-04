@@ -3,25 +3,30 @@ CFLAGS = -Wall -Wextra -std=c99 -I./include -g
 LDFLAGS = -lm
 
 # Fichiers sources
-SRC_COMMON = src/rainbow_table.c src/hash.c
+SRC_COMMON = src/rainbow_table.c src/hash.c 
 SRC_CREATE = src/rainbow_create.c
 SRC_ATTACK = src/rainbow_attack.c
 SRC_HASH_MANY = src/hash_many.c
+SRC_TEST = src/justhash.c
 
 # Fichiers objets
 OBJ_COMMON = $(SRC_COMMON:.c=.o)
 OBJ_CREATE = $(SRC_CREATE:.c=.o)
 OBJ_ATTACK = $(SRC_ATTACK:.c=.o)
 OBJ_HASH_MANY = $(SRC_HASH_MANY:.c=.o)
+OBJ_TEST = $(SRC_TEST:.c=.o)
 
 # Cibles principales
-all: rainbow_create rainbow_attack
+all: rainbow_create rainbow_attack justhash
 
 # Liens des exécutables
 rainbow_create: $(OBJ_CREATE) $(OBJ_COMMON)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 rainbow_attack: $(OBJ_ATTACK) $(OBJ_COMMON)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+justhash: $(OBJ_TEST) $(OBJ_COMMON)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # hash_many: $(OBJ_HASH_MANY) $(OBJ_COMMON)

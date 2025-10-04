@@ -28,14 +28,24 @@ void fill_files(int len, char* files[])
 
     FILE* pass_file = NULL;
 
-    if (len == R+1)
-        pass_file = fopen(files[len-1], "r");
+    int nb_files = len;
 
-    for (int i = 0; i<len; i++)
+    if (len == R+1)
+    {
+        nb_files--;
+        printf("Ouverture du fichier %s pour lire les mots de passe depuis celui-ci.\n", files[len-1]);
+        pass_file = fopen(files[len-1], "r");
+    }
+
+
+
+
+    for (int i = 0; i<nb_files; i++)
     {
         FILE* current_file = fopen(files[i], "w");
         
         int nb_lines = 0;
+
         while (nb_lines != N)
         {
             Password pass0;
@@ -45,7 +55,11 @@ void fill_files(int len, char* files[])
                 generate_random_password(pass0);
             else
             {
-                fscanf(current_file, "%s", pass0);
+                if (fscanf(pass_file, "%s", pass0) == EOF)
+                {
+                    printf("Il n'y a pas assez de mot de passe dans le fichier %s.\n", files[len-1]);
+                    exit(EXIT_FAILURE);
+                }
                 pass0[M] = '\0';
             }
 
