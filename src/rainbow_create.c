@@ -49,7 +49,7 @@ void fill_files(int len, char* files[])
                 pass0[M] = '\0';
             }
 
-            apply(pass0, passL, new_R, 0, L-1);
+            apply(pass0, passL, new_R, 0, L);
 
             if(table_insert(current_table, pass0, passL) != -1)
             {

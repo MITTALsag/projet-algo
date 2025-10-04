@@ -31,9 +31,9 @@ void attackme(char* files[], int len, char* attackme, char* result)
         {
             Password passible_passL;
 
-            rainbow->reductions(current_hash, L-i-1, 26, "abcdefghijklmnopqrstuvwxyz", passible_passL);
+            rainbow->reductions(current_hash, i, 26, "abcdefghijklmnopqrstuvwxyz", passible_passL);
             
-            apply(passible_passL, passible_passL, rainbow, L-i, L-1)
+            apply(passible_passL, passible_passL, rainbow, i+1, L-1);
 
             // for (int j = 1; j<=i; j++)
             // {
@@ -48,7 +48,7 @@ void attackme(char* files[], int len, char* attackme, char* result)
             {
                 found = true;
 
-                apply(pass0, candidate, rainbow, 0, L-i-2)
+                apply(pass0, candidate, rainbow, 0, i+1);
                 // for(int k = i+2; k<=L; k++)
                 // {
                 //     pwhash new_hash = rainbow->hash(pass0);

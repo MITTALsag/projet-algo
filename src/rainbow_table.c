@@ -274,7 +274,7 @@ void apply(const Password pass0, Password result, const RainbowTable* rt, int i,
     Password current_pass;
     strcpy(current_pass, pass0);
 
-    for (int j = i; j <= k; j++)
+    for (int j = i; j < k; j++)
     {
         // Vérifier que les fonctions sont initialisées
         if (rt->hash == NULL || rt->reductions == NULL) 
