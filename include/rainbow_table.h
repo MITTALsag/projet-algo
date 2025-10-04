@@ -64,7 +64,7 @@ RainbowTable* init_rainbow_table(void);
 
 
 /* Applique la chaîne de hachage et réduction i fois*/
-void apply(const Password pass0, Password result, const RainbowTable* rt, int i);
+void apply(const Password pass0, Password result, const RainbowTable* rt, int i, int k);
 
 /* Insertion d'une table à un index spécifique */
 int rainbowtable_insert(RainbowTable* rt, Table* table);

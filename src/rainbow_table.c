@@ -269,18 +269,18 @@ void free_rainbow_table(RainbowTable* rt)
     free(rt);
 }
 
-void apply(const Password pass0, Password result, const RainbowTable* rt, int i)
+void apply(const Password pass0, Password result, const RainbowTable* rt, int i, int k)
 {
     Password current_pass;
     strcpy(current_pass, pass0);
 
-    for (int j = 0; j < i; j++)
+    for (int j = i; j <= k; j++)
     {
         // Vérifier que les fonctions sont initialisées
         if (rt->hash == NULL || rt->reductions == NULL) 
         {
-            // Gérer l'erreur ou utiliser des fonctions par défaut
-            break;
+            printf("la fonction de hashage ou de reduction n'est pas dans la rainbowtable.\n");
+            EXIT_FAILURE;
         }
         
         pwhash hash_value = rt->hash(current_pass);

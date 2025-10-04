@@ -29,7 +29,8 @@ void attackme(char* files[], int len, char* attackme, char* result)
 
         while (i<L && !found)
         {
-            rainbow->reductions(current_hash, i, 26, "abcdefghijklmnopqrstuvwxyz", current_pass);
+            rainbow->reductions(current_hash, L-i-1, 26, "abcdefghijklmnopqrstuvwxyz", current_pass);
+            apply()
             for (int j = 1; j<=i; j++)
             {
                 current_hash = rainbow->hash(current_pass);
