@@ -1,5 +1,6 @@
-fich*
+files/fich*
 **/*.o
 rainbow_create
 rainbow_attack
 hash_many
+justhash
