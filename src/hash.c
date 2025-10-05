@@ -15,12 +15,12 @@ void reduction(uint64_t hash,int variation,int allowed_chars_length, char* allow
 {
     if (!pass) return;
 
+    uint64_t modified_hash = hash * (variation + 1);
 
-    for (int i = 0; i < M; i++) 
+    for (int i = 0; i < M; i++)
     {
-        pass[i] = allowed_chars[(hash+variation) % allowed_chars_length];
-        hash /= allowed_chars_length;
+        pass[i] = allowed_chars[modified_hash % allowed_chars_length];
+        modified_hash /= allowed_chars_length;
     }
     pass[M] = '\0';
-
 }
