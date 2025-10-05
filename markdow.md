@@ -32,110 +32,72 @@ Pour des $\text{pass}_{x,0}$ et $\text{pass}_{y,0}$ choisis aléatoirement et di
 
 **Approche récursive**
 
-Soit $A_i$ l'événement : "les deux chaînes ont le même mot de passe à l'étape $i$".
+Soit $A_i$ l'événement : "les deux chaînes n'ont pas le même mot de passe à l'étape $i$".
 
 On veut calculer $P(A_L)$.
 
-- **Étape initiale** : $P(A_0) = 0$ (les mots de passe initiaux sont différents par construction)
+- **Étape initiale** : $P(A_0) = 1$ (les mots de passe initiaux sont différents par construction)
 
-- **Étape 1** : 
+- **Étape k** : 
   $$
-  P(A_1) = P(\text{pass}_{x,1} = \text{pass}_{y,1}) = \frac{1}{X}
+  P(A_k) = P(\text{pass}_{x,k} \neq \text{pass}_{y,k}) = \left(\frac{X-1}{X}\right)^k = \left(1 - \frac{1}{X}\right)^k
   $$
-  car la fonction de réduction $r$ appliquée aux hashs produit une sortie uniforme.
+  car la fonction de réduction $r$ appliquée aux hashs produit une sortie uniforme.  
+  Et il faut "éviter" une valeur pour chaque étape $i$ où $0 \leq i \leq k$.
 
-- **Étape 2** :
-  - Si $A_1$ est vrai (probabilité $\frac{1}{X}$), alors $P(A_2 | A_1) = 1$ (les chaînes restent fusionnées)
-  - Si $A_1$ est faux (probabilité $1 - \frac{1}{X}$), alors $P(A_2 | \overline{A_1}) = \frac{1}{X}$
-  
-  Donc par la formule des probabilités totales :
-  $$
-  P(A_2) = P(A_1) \cdot 1 + P(\overline{A_1}) \cdot \frac{1}{X} = \frac{1}{X} + \left(1 - \frac{1}{X}\right) \cdot \frac{1}{X} = 1 - \left(1 - \frac{1}{X}\right)^2
-  $$
 
-- **Formule générale** : Par récurrence, on montre que :
-  $$
-  P(A_i) = 1 - \left(1 - \frac{1}{X}\right)^i
-  $$
+**Donc la probabilité exacte** que deux chaînes distinctes n'aient pas le même mot de passe final est :
+$$
+P(\text{pass}_{x,L} \neq \text{pass}_{y,L}) = \left(1 - \frac{1}{X}\right)^L
+= exp\left(L \cdot ln(1-\frac{1}{X}) \right) \approx e^{-L/X} \approx 1 - \frac{L}{X}
+$$
 
-**Preuve par récurrence** :
-
-- **Initialisation** : Pour $i=1$, $P(A_1) = \frac{1}{X} = 1 - (1 - \frac{1}{X})^1$ 
-
-- **Hérédité** : Supposons $P(A_i) = 1 - (1 - \frac{1}{X})^i$
-
-$
-P(A_{i+1}) = P(A_i) \cdot 1 + P(\overline{A_i}) \cdot \frac{1}{X}
-    = P(A_{i}) + (1 - P(A_{i})) \cdot \frac{1}{X}
-    = 1 - \left(1 - \frac{1}{X} \right)^i + \left(1 - \frac{1}{X} \right)^i \cdot \frac{1}{X}
-    = 1 - \left(1 - \frac{1}{X} \right)^i \left(1 - \frac{1}{X} \right)
-    = 1 - \left(1 - \frac{1}{X} \right)^{i+1}
-$
-
-D'où la récurrence.
-
+Car $ \quad ln(1-\frac{1}{X}) \approx -\frac{1}{X} \quad \text{et} \quad  e^{-L/X} \approx 1 - \frac{L}{X}$ pour $L \ll X$.  
+($L$ négligeable devant $X$).
 
 **Donc la probabilité exacte** que deux chaînes distinctes aient le même mot de passe final est :
 $$
-P(\text{pass}_{x,L} = \text{pass}_{y,L}) = 1 - \left(1 - \frac{1}{X}\right)^L
+P(\text{pass}_{x,L} = \text{pass}_{y,L}) \approx \frac{L}{X}
 $$
 
 
+### Cas générale avec N chaine.
+On suppose qu'on a déjà $k$ chaîne dans la table. On génère une nouvelle chaîne $k+1$.
+Soit maintenant $i \leq k$.  
+Par le raisonnement de la Partie 1, la probabilité que la nouvelle chaîne ($k+1$) entre en collision avec la chaîne $i$ est :  
 
-### Ordre de grandeur du nombre de chaînes
+$$P(\text{collision avec la chaîne i}) \approx L/X $$
 
-Considérons $N$ chaînes avec des $\text{pass}_{x,0}$ tous distincts. On veut estimer combien de chaînes on peut insérer avant que les collisions deviennent probables.
-
-**Approche par construction séquentielle conditionnelle** :
-
-On construit les chaînes une par une, en vérifiant à chaque étape que la nouvelle chaîne ne crée pas de collision avec les chaînes déjà présentes.
-
-Soit $E_N$ l'événement : "les $N$ premières chaînes ont toutes des $\text{pass}_{x,L}$ distincts".
-
-La probabilité d'obtenir $N$ chaînes sans aucune collision se calcule récursivement :
-
-- $P(E_1) = 1$ (une seule chaîne, aucune collision possible)
-- $P(E_2) = P(E_1) \times P(\text{chaîne 2 réussit} | E_1) = 1 \times \left(1 - \frac{1}{X}\right)^L$
-- $P(E_3) = P(E_2) \times P(\text{chaîne 3 réussit} | E_2) = \left(1 - \frac{1}{X}\right)^L \times \left(1 - \frac{1}{X}\right)^{2L}$
-- ...
-
-En généralisant :
+La nouvelle chaîne doit éviter chacune des k chaînes existantes.  
+Si on note $B_i$ : "collision avec la chaîne i".   
+On a alors :
 $$
-P(E_N) = \prod_{k=1}^{N-1} \left(1 - \frac{1}{X}\right)^{kL} = \left(1 - \frac{1}{X}\right)^{L \cdot \sum_{k=1}^{N-1} k} = \left(1 - \frac{1}{X}\right)^{\frac{LN(N-1)}{2}} = exp{\left(\frac{LN(N-1)}{2} \cdot ln(1-\frac{1}{X}) \right)} = exp{\left(-\frac{LN(N-1)}{2X} \right)} = exp{\left(-\frac{LN^2}{2X} \right)}
-$$
-(car Pour $ N(N-1) \approx N^2 \quad \text{et} \quad ln(1-\frac{1}{X}) \approx - \frac{1}{X} \quad \text{Pour N grand et X grand}$)
-
-
-**Seuil de difficulté** :
-
-On considère qu'il devient "difficile" d'ajouter des chaînes sans collision lorsque $P(E_N)$ devient trop faible. Si on fixe un seuil de $P(E_N) > 0.5$ :
-
-$$
-P(E_N) > 0.5
-$$
-$$
-\Leftrightarrow exp{\left(-\frac{LN^2}{2X} \right)} > 0.5
-$$
-$$
-\Leftrightarrow -\frac{LN^2}{2X} > \ln(0.5)
-$$
-$$
-\Leftrightarrow -\frac{LN^2}{2X}> -\ln(2)
-$$
-$$
-\Leftrightarrow N^2 < \frac{2X}{L} \ln(2)
-$$
-$$
-\Leftrightarrow N < \sqrt{\frac{2X}{L} \ln(2)}
+P(\text{collision}) = P(B_1 ∪ B_2 ∪ ... ∪ B_k) \approx Σ_{i=1}^{k} P(B_i) \approx k \cdot \frac{L}{X}
 $$
 
-**Application numérique** pour $M = 6$ :
-- $X = 26^6 \approx 3.09 \times 10^8$
-- $L = 1000$
-- $N_{\text{max}} \approx \sqrt{\frac{2 \times 3.09 \times 10^8}{1000} \times 0.693} \approx \sqrt{428,000} \approx 654$
+Ainsi si on a N-1 chaînes et que l'on en insère une N-ème,  
+On a :
+$$
+P(\text{collision}) \approx (N-1) \cdot \frac{L}{X} \approx \frac{N \cdot L}{X}
+$$
 
-**Conclusion** :
+Car $ N-1 \approx N $ pour N grand.
 
-L'approche par construction séquentielle nous ramène au même ordre de grandeur que l'approche par paires : on peut insérer environ 600-700 chaînes dans une rainbow table avant que les collisions ne deviennent probables.
 
-Cette analyse confirme que pour les paramètres de l'énoncé ($M=6$, $L=1000$, $N=100,000$), il serait très difficile de créer une seule table avec 100,000 chaînes sans collisions fréquentes, justifiant ainsi l'utilisation de multiples tables ($R=10$).
+**Application numérique** (M=6, L=1000) :  
+
+$$
+P(\text{collision}) \leq 0.5 \Leftrightarrow N \leq 0.5 \cdot \frac{X}{L}
+$$
+
+Pour $X = 26^6 \quad L = 1000$  
+On a : 
+$$
+P(\text{collision}) \leq 0.5 \Leftrightarrow N \leq 154,000$$
+
+L'ordre de grandeur du nombre de chaînes qu'on peut facilement insérer est de N ≈ 150,000 chaînes
+
+Avec $N = 100,000 \quad L = 1000 \quad X = 26^6$.  
+$P(collision) \approx 100,000 × 1,000 / 26^6 \approx 0.32$
+
+Interprétation : Vers la fin du remplissage de la table, environ 1 tentative sur 3 sera rejetée car le pass_{x,L} sera déjà présent.
