@@ -1,6 +1,9 @@
-files/fich*
+files/
+CRACK
+MDP
 **/*.o
 rainbow_create
 rainbow_attack
 hash_many
 justhash
+result.txt
