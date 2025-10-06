@@ -18,47 +18,72 @@ void attackme(char* files[], int len, char* attackme, char* result)
         rainbowtable_insert(rainbow, new_table);
     }
 
-    
     pwhash current_hash;
 
     while(fscanf(attack, "%llX", &current_hash) != EOF)
     {
-
         bool found = false;
-        char* pass0=NULL;
-        int i = L-1;
+        char* pass0 = NULL;
+        int position = -1;
 
-        while (i>=0 && !found)
+        for (int i = L-1; i >= 0 && !found; i--)
         {
-            Password passible_passL;
+            Password possible_passL;
+            pwhash temp_hash = current_hash;
 
-            rainbow->reductions(current_hash, i, 26, "abcdefghijklmnopqrstuvwxyz", passible_passL);
-            
-            apply(passible_passL, passible_passL, rainbow, i+1, L);
+            rainbow->reductions(temp_hash, i, 26, "abcdefghijklmnopqrstuvwxyz", possible_passL);
+            apply(possible_passL, possible_passL, rainbow, i+1, L);
 
-            pass0 = rainbow_find(rainbow, passible_passL);
+            pass0 = rainbow_find(rainbow, possible_passL);
 
-            found = pass0!=NULL;
-
-            i--;
+            if (pass0 != NULL)
+            {
+                found = true;
+                position = i;
+            }
         }
 
-        Password candidate;
+        bool password_found = false;
+
         if (found)
         {
-            found = true;
+            Password candidate;
+            strcpy(candidate, pass0);
 
-            apply(pass0, candidate, rainbow, 0, i+1);
+            for (int j = 0; j <= position && !password_found; j++)
+            {
+                pwhash hash_temp = rainbow->hash(candidate);
 
-            fprintf(fresult, "%s\n", pass0);
+                if (hash_temp == current_hash)
+                {
+                    fprintf(fresult, "%s\n", candidate);
+                    password_found = true;
+                }
+                else
+                {
+                    rainbow->reductions(hash_temp, j, 26, "abcdefghijklmnopqrstuvwxyz", candidate);
+                }
+            }
+
+            if (!password_found)
+            {
+                pwhash final_hash = rainbow->hash(candidate);
+                if (final_hash == current_hash)
+                {
+                    fprintf(fresult, "%s\n", candidate);
+                    password_found = true;
+                }
+            }
         }
-        else
+
+        if (!password_found)
+        {
             fprintf(fresult, "\n");
-    } 
+        }
+    }
 
     fclose(attack);
     fclose(fresult);
-
     free_rainbow_table(rainbow);
 }
 
