@@ -10,17 +10,19 @@ pwhash target_hash_function (const void *data) {
     return(h=h*r+M,h^=h>>31,h*=r,h^=h>>31,h*=r,h^=h>>31,h*=r,h);
 }
 
-
-void reduction(uint64_t hash,int variation,int allowed_chars_length, char* allowed_chars, char* pass)
+// Adapté de : https://github.com/qsantos/rainbow/blob/master/rtable.c#L239
+void reduction(uint64_t hash, int variation, int allowed_chars_length, char* allowed_chars, char* pass)
 {
-    if (!pass) return;
+    if (!pass || !allowed_chars || allowed_chars_length <= 0) return;
 
-    uint64_t modified_hash = hash * (variation + 1);
+    uint32_t step = (uint32_t)variation;
 
-    for (int i = 0; i < M; i++)
+    const unsigned char* hash_bytes = (const unsigned char*)&hash;
+
+    for (int i = 0; i < M; i++, step >>= 8)
     {
-        pass[i] = allowed_chars[modified_hash % allowed_chars_length];
-        modified_hash /= allowed_chars_length;
+        unsigned char byte = hash_bytes[i % sizeof(uint64_t)] ^ (unsigned char)step;
+        pass[i] = allowed_chars[byte % allowed_chars_length];
     }
     pass[M] = '\0';
 }
