@@ -14,7 +14,7 @@ int main(void)
         if (strcmp(pass0, "\n") != 0){
             pwhash ha = target_hash_function(pass0);
 
-            fprintf(rr, "%#010lX\n", ha);
+            fprintf(rr, "%#010llX\n", ha);
         }
     }
 
