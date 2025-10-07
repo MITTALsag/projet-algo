@@ -50,6 +50,17 @@ Table* create_table(char* file);
 
 /*=======================================================================================================*/
 
+/* Type pour stocker plusieurs candidats lors de la recherche */
+#define MAX_CANDIDATES 100  // Nombre maximum de candidats à tester par passL
+
+typedef struct CandidateList 
+{
+    Password candidates[MAX_CANDIDATES];  // Liste des pass0 possibles
+    int count;                            // Nombre de candidats trouvés
+} CandidateList;
+
+/*=======================================================================================================*/
+
 /* Type pour la Rainbow Table */
 typedef struct RainbowTable 
 {
@@ -68,8 +79,8 @@ int rainbowtable_insert(RainbowTable* rt, Table* table);
 /* Libération de la Rainbow Table */
 void free_rainbow_table(RainbowTable* rt);
 
-/* Recherche dans la Rainbow Table */
-char* rainbow_find(RainbowTable* rt, Password passL);
+/* Recherche dans la Rainbow Table, retourne tous les candidats possibles */
+CandidateList* rainbow_find(RainbowTable* rt, Password passL);
 
 
 /*=======================================================================================================*/

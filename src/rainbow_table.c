@@ -90,7 +90,7 @@ Table* init_table(void)
     }
 
     table->size = 0;        // Nombre d'éléments initialisé à 0
-    table->capacity = N;    // Capacité maximale de la table
+    table->capacity = N;    // Capacité égale au nombre de chaînes
     
     return table;
 }
@@ -295,32 +295,40 @@ void free_rainbow_table(RainbowTable* rt)
 }
 
 
-/* Recherche dans la Rainbow Table */
-char* rainbow_find(RainbowTable* rt, Password passL)
+/* Recherche dans la Rainbow Table, retourne tous les candidats possibles */
+CandidateList* rainbow_find(RainbowTable* rt, Password passL)
 {
     if (!rt || !passL) 
     {
-        return NULL; // Erreur de paramètres
+        return NULL;
     }
 
-    Node* candidate;
-
-    // Parcourir chaque table dans la Rainbow Table
-    for (int i = 0; i<rt->idx; i++)
+    CandidateList* list = (CandidateList*)malloc(sizeof(CandidateList));
+    if (!list) 
     {
-        // Accéder à la table courante
+        return NULL;
+    }
+    
+    list->count = 0;
+
+    // parcourt toutes les tables pour collecter tous les candidats
+    for (int i = 0; i < rt->idx && list->count < MAX_CANDIDATES; i++)
+    {
         Table* current_table = rt->tables[i];
-
-        // Rechercher le mot de passe dans la table courante
-        candidate = table_find(current_table, passL);
-
-        // Si trouvé, retourner le mot de passe initial
-        if (candidate)
+        pwhash index = target_hash_function(passL) % current_table->capacity;
+        Node* current = current_table->buckets[index];
+        
+        // parcourt toute la liste chaînée du bucket
+        while (current && list->count < MAX_CANDIDATES)
         {
-            return candidate->pass0;
+            if (strcmp(current->passL, passL) == 0) 
+            {
+                strcpy(list->candidates[list->count], current->pass0);
+                list->count++;
+            }
+            current = current->next;
         }
-
     }
 
-    return NULL;
+    return list;
 }
