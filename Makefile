@@ -40,6 +40,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+
+# Scripts
+scripts:
+	@if [ -f rainbow_create.sh ]; then chmod +x rainbow_create.sh; fi
+	@if [ -f rainbow_attack.sh ]; then chmod +x rainbow_attack.sh; fi
+
+
 # Nettoyage
 clean:
 	rm -f $(OBJDIR)/*.o $(BINDIR)/*

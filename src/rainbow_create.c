@@ -14,7 +14,7 @@ void generate_random_password(Password password)
 
 
 /* Remplit les fichiers avec des mots de passe */
-void fill_files(int len, char* files[])
+int fill_files(int len, char* files[])
 {
     // Vérification du nombre de fichiers
     if (len != R && len != R+1)
@@ -22,7 +22,7 @@ void fill_files(int len, char* files[])
         printf("Il doit y avoir %d ou %d fichier passé en paramètre\n", R, R+1);
         printf("Si il y a %d fichiers, alors les pass0 seront choisit aléatoirement.\n", R);
         printf("Sinon il seront choisit à partir du %dème fichier. (un par ligne et il faut donc %d ligne dans ce fichier).\n", R+1, N*R);
-        return;
+        return 1;
     }
     
     // Initialisation de la Rainbow Table
@@ -31,7 +31,7 @@ void fill_files(int len, char* files[])
     if (!new_R) 
     {
         printf("Échec de l'initialisation de la Rainbow Table.\n");
-        return;
+        return 1;
     }
 
     FILE* pass_file = NULL;
@@ -59,7 +59,7 @@ void fill_files(int len, char* files[])
             if (pass_file)
                 fclose(pass_file);
             free_rainbow_table(new_R);
-            return;
+            return 1;
         }
 
         // Compteur de lignes écrites
@@ -91,7 +91,7 @@ void fill_files(int len, char* files[])
                     fclose(pass_file);
                     free_rainbow_table(new_R);
                     free_table(&current_table);
-                    return;
+                    return 1;
                 }
                 pass0[M] = '\0';
             }
@@ -126,7 +126,7 @@ void fill_files(int len, char* files[])
                     fclose(pass_file);
                 free_rainbow_table(new_R);
                 free_table(&current_table);
-                return;
+                return 1;
             }
             // Si insert_result == -1, le couple existe déjà, on ne fait rien et on recommence
 
@@ -146,13 +146,14 @@ void fill_files(int len, char* files[])
     // Fermeture du fichier de pass0 si il y en a un
     if (pass_file)
         fclose(pass_file);
+
+    return 0;
 }
 
 int main(int argc, char* argv[])
 {
     int nb_files = argc - 1; // Sans le nom du programme
 
-    fill_files(nb_files, argv+1);
+    return fill_files(nb_files, argv+1);
 
-    return 0;
 }
