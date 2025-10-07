@@ -10,19 +10,27 @@ pwhash target_hash_function (const void *data) {
     return(h=h*r+M,h^=h>>31,h*=r,h^=h>>31,h*=r,h^=h>>31,h*=r,h);
 }
 
-// Adapté de : https://github.com/qsantos/rainbow/blob/master/rtable.c#L239
-void reduction(uint64_t hash, int variation, int allowed_chars_length, char* allowed_chars, char* pass)
+// fonction de mélange rapide
+static inline uint64_t fast_mix(uint64_t x) 
 {
-    if (!pass || !allowed_chars || allowed_chars_length <= 0) return;
+    x ^= x >> 33;
+    x *= 0xff51afd7ed558ccd;
+    x ^= x >> 33;
+    return x;
+}
 
-    uint32_t step = (uint32_t)variation;
+// fonction de réduction
+void reduction(uint64_t hash, int variation, int allowed_chars_length, char* allowed_chars, char* pass) 
+{
 
-    const unsigned char* hash_bytes = (const unsigned char*)&hash;
-
-    for (int i = 0; i < M; i++, step >>= 8)
+    uint64_t state = fast_mix(hash ^ ((uint64_t)variation * 0x9e3779b97f4a7c15));
+    
+    // Générer un mot de passe de M caractères
+    for (int i = 0; i < M; i++) 
     {
-        unsigned char byte = hash_bytes[i % sizeof(uint64_t)] ^ (unsigned char)step;
-        pass[i] = allowed_chars[byte % allowed_chars_length];
+        pass[i] = allowed_chars[state % allowed_chars_length];
+        state = fast_mix(state + i + variation);
     }
     pass[M] = '\0';
 }
+

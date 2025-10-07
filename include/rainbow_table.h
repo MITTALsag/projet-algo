@@ -7,7 +7,7 @@
 typedef char Password[M+1];
 
 /* Type pointeur vers fonction de réduction */
-typedef void (*ReductionFunc)(pwhash,int ,int, Password, Password);
+typedef void (*ReductionFunc)(pwhash,int ,int, char*, char*);
 
 /* Type pointeur vers fonction de hachage */
 typedef pwhash (*HashFunc)(const void *);
@@ -44,6 +44,7 @@ void free_table(Table** table_ptr);
 /* Insertion d'un élément dans la table si l'élément n'existe pas déjà */
 int table_insert(Table* table, const Password pass0, const Password passL);
 
+/* Création de la table à partir d'un fichier */
 Table* create_table(char* file);
 
 
@@ -52,26 +53,22 @@ Table* create_table(char* file);
 /* Type pour la Rainbow Table */
 typedef struct RainbowTable 
 {
-    Table* tables[R];                   // R tables
-    int idx;
-    // ReductionFunc reductions[L];        // L fonctions de réduction différentes
-    ReductionFunc reductions;            // L fonctions de réduction différentes
+    Table* tables[R];                // R tables
+    int idx;                         // Index de la prochaine table à insérer
+    ReductionFunc reductions;        // L fonctions de réduction différentes
     HashFunc hash;                   // L fonctions de hashage différentes
 } RainbowTable;
 
 /* Initialisation de la Rainbow Table */
 RainbowTable* init_rainbow_table(void);
 
-
-/* Applique la chaîne de hachage et réduction i fois*/
-void apply(const Password pass0, Password result, const RainbowTable* rt, int i, int k);
-
-/* Insertion d'une table à un index spécifique */
+/* Insertion d'une table à la fin du tableau tables */
 int rainbowtable_insert(RainbowTable* rt, Table* table);
 
 /* Libération de la Rainbow Table */
 void free_rainbow_table(RainbowTable* rt);
 
+/* Recherche dans la Rainbow Table */
 char* rainbow_find(RainbowTable* rt, Password passL);
 
 

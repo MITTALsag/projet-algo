@@ -10,7 +10,7 @@
 #include <math.h>
 
 #define M 6 // taille mot de passe
-#define L 1000 // longueur chaine
+#define L 1500 // longueur chaine
 #define N 100000 // nb chaines par table
 #define R 10 // nb tables
 
@@ -19,7 +19,9 @@
 typedef uint64_t pwhash;
 
 pwhash target_hash_function (const void *data);
-void reduction(uint64_t hash,int variation,int allowed_chars_length, char* allowed_chars, char* pass);
+
+void reduction(uint64_t hash, int variation, int allowed_chars_length, char* allowed_chars, char* pass);
+
 
 /*
 Quelques infos qui peuvent vous aider :

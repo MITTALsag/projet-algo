@@ -1,64 +1,63 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -I./include -g
+CFLAGS = -Wall -Wextra -Werror -std=c99 -I./include -O3 -march=native
 LDFLAGS = -lm
 
-# Fichiers sources
-SRC_COMMON = src/rainbow_table.c src/hash.c 
-SRC_CREATE = src/rainbow_create.c
-SRC_ATTACK = src/rainbow_attack.c
-SRC_HASH_MANY = src/hash_many.c
-SRC_TEST = src/justhash.c
+# Dossiers
+OBJDIR = object
+SRCDIR = src
+BINDIR = exec
 
-# Fichiers objets
-OBJ_COMMON = $(SRC_COMMON:.c=.o)
-OBJ_CREATE = $(SRC_CREATE:.c=.o)
-OBJ_ATTACK = $(SRC_ATTACK:.c=.o)
-OBJ_HASH_MANY = $(SRC_HASH_MANY:.c=.o)
-OBJ_TEST = $(SRC_TEST:.c=.o)
+# Fichiers sources
+SRC_COMMON = $(SRCDIR)/rainbow_table.c $(SRCDIR)/hash.c
+SRC_CREATE = $(SRCDIR)/rainbow_create.c
+SRC_ATTACK = $(SRCDIR)/rainbow_attack.c
+SRC_HASH_MANY = $(SRCDIR)/hash_many.c
+
+# Fichiers objets (dans object/)
+OBJ_COMMON = $(SRC_COMMON:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+OBJ_CREATE = $(SRC_CREATE:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+OBJ_ATTACK = $(SRC_ATTACK:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+OBJ_HASH_MANY = $(SRC_HASH_MANY:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 # Cibles principales
-all: rainbow_create rainbow_attack justhash
+all: $(BINDIR)/rainbow_create $(BINDIR)/rainbow_attack $(BINDIR)/hash_many
 
 # Liens des exécutables
-rainbow_create: $(OBJ_CREATE) $(OBJ_COMMON)
+$(BINDIR)/rainbow_create: $(OBJ_CREATE) $(OBJ_COMMON)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-rainbow_attack: $(OBJ_ATTACK) $(OBJ_COMMON)
+$(BINDIR)/rainbow_attack: $(OBJ_ATTACK) $(OBJ_COMMON)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-justhash: $(OBJ_TEST) $(OBJ_COMMON)
+$(BINDIR)/hash_many: $(OBJ_HASH_MANY) $(OBJ_COMMON)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# hash_many: $(OBJ_HASH_MANY) $(OBJ_COMMON)
-# 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-
-# Règle générique pour compiler les .c en .o
-%.o: %.c
+# Compilation des .c en .o dans le dossier object/
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Nettoyage
 clean:
-	rm -f src/*.o rainbow_create rainbow_attack hash_many
+	rm -f $(OBJDIR)/*.o $(BINDIR)/*
 
 re: clean all
 
-# Nettoyage complet
 distclean: clean
-	rm -f found_6.txt found_7.txt table*.txt
+	rm -f found_6.txt found_7.txt Tables*/table*.txt files*/*.txt
 
-# Installation (crée les dossiers manquants)
 init:
-	mkdir -p src include
+	mkdir -p $(SRCDIR) include $(OBJDIR) $(BINDIR)
 
-# Affichage d'aide
 help:
-	@echo "Cibles disponibles:"
-	@echo "  all          - Compile tous les programmes"
+	@echo "Cibles disponibles :"
+	@echo "  all            - Compile tous les programmes"
 	@echo "  rainbow_create - Programme de création des tables"
-	@echo "  rainbow_attack - Programme d'attaque des hashs"
-	@echo "  hash_many    - Programme de calcul de hashs multiples"
-	@echo "  clean        - Supprime les fichiers objets et exécutables"
-	@echo "  distclean    - Supprime aussi les fichiers générés"
-	@echo "  help         - Affiche cette aide"
-
-# .PHONY: all clean distclean init help
+	@echo "  rainbow_attack - Programme d’attaque des hashs"
+	@echo "  hash_many      - Programme de calcul de hashs multiples"
+	@echo "  clean          - Supprime les fichiers objets et exécutables"
+	@echo "  distclean      - Supprime aussi les fichiers générés"
+	@echo "  init           - Crée les dossiers nécessaires"
