@@ -21,6 +21,14 @@ INPUT_HASHES=$2
 OUTPUT_PASSWORDS=$3
 TABLE_DIR="${4:-Tables}"  # Répertoire par défaut ./Tables
 
+
+R_VALUE=$(grep "^#define R " include/hash.h | awk '{print $3}')
+if [ "$R_VALUE" != "$NUM_TABLES" ]; then
+    echo ""
+    echo "Attention : hash.h définit R=$R_VALUE mais vous avez demandé $NUM_TABLES tables"
+    echo "Assurez-vous que hash.h est correctement configuré pour le nombre de tables que vous utilisez"
+fi
+
 # Vérifier que INPUT_HASHES existe
 if [ ! -f "$INPUT_HASHES" ]; then
     echo "Erreur : Le fichier de hashs d'entrée '$INPUT_HASHES' est introuvable !"
@@ -58,13 +66,15 @@ echo ""
 # Lancer l'attaque
 time ./exec/rainbow_attack $TABLE_LIST "$INPUT_HASHES" "$OUTPUT_PASSWORDS"
 
+
+
 # Vérifier si l'attaque a réussi
 if [ -f "$OUTPUT_PASSWORDS" ]; then
     echo ""
     echo "Fin de l'attaque."
     
     # Calculer le taux de réussite
-    FOUND=$(grep -c '^[a-z]\{6\}$' "$OUTPUT_PASSWORDS" 2>/dev/null || echo 0)
+    FOUND=$(grep -c "^[a-z]\{$R_VALUE\}$" "$OUTPUT_PASSWORDS" 2>/dev/null || echo 0)
     SUCCESS_RATE=$(echo "scale=2; $FOUND * 100 / $NUM_HASHES" | bc)
     
     echo "Résulats :"

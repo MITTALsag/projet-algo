@@ -53,7 +53,7 @@ int attackme(char** files, int len, char* attackme, char* result)
     int found_count = 0;
 
     // Pour chaque hash dans le fichier attackme
-    while (fscanf(fa, "%llX", &h) != EOF)
+    while (fscanf(fa, "%lX", &h) != EOF)
     {
         total_hashes++;
 

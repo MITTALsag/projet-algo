@@ -373,20 +373,6 @@ CandidateList* rainbow_find(RainbowTable* rt, Password passL)
         {
             list_candidates_add(list_candidates, node->pass0);
         }
-
-        // pwhash index = target_hash_function(passL) % current_table->capacity;
-        // Node* current = current_table->buckets[index];
-        
-        // // parcourt toute la liste chaînée du bucket
-        // while (current && list->count < MAX_CANDIDATES)
-        // {
-        //     if (strcmp(current->passL, passL) == 0) 
-        //     {
-        //         strcpy(list->candidates[list->count], current->pass0);
-        //         list->count++;
-        //     }
-        //     current = current->next;
-        // }
     }
 
     return list_candidates;
