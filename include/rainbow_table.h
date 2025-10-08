@@ -26,12 +26,15 @@ typedef struct Node
 
 /*=======================================================================================================*/
 
+# define TABLE_SIZE 4*N  // Taille de la table de hachage pour un load factor de 0.25
+
 /* Type pour les tables de hachage */
 typedef struct Table 
 {
-    Node* buckets[N];  // Tableau de pointeurs vers les listes chaînées
+    Node* buckets[TABLE_SIZE];  // Tableau de pointeurs vers les listes chaînées
     size_t size;       // Nombre d'éléments dans la table
     size_t capacity;   // Capacité maximale de la table
+    int collisions;    // Nombre de collisions lors des insertions
 } Table;
 
 

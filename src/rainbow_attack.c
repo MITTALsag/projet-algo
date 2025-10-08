@@ -118,9 +118,9 @@ int attackme(char** files, int len, char* attackme, char* result)
                         }
                     }
                 }
-
-                free_candidate_list(candidates);
             }
+            free_candidate_list(candidates);
+            candidates = NULL;
         }
 
         if (!found) 

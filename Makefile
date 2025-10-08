@@ -1,4 +1,5 @@
-CC = gcc
+CC = clang
+# CFLAGS = -O0 -g -Wall -Wextra -Werror -std=c99 -I./include
 CFLAGS = -Wall -Wextra -Werror -std=c99 -I./include -O3 -march=native
 LDFLAGS = -lm
 

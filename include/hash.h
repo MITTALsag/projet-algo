@@ -10,7 +10,7 @@
 #include <math.h>
 
 #define M 6 // taille mot de passe
-#define L 1500 // longueur chaine
+#define L 1000 // longueur chaine
 #define N 100000 // nb chaines par table
 #define R 10 // nb tables
 

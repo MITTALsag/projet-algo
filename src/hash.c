@@ -46,4 +46,3 @@ void reduction(uint64_t hash, int variation, int allowed_chars_length, char* all
     //Ajoute \0 pour finir la chaine de char
     pass[M] = '\0';
 }
-

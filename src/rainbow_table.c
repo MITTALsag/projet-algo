@@ -44,15 +44,17 @@ int list_insert(Node** head, Node* new_node)
     {
         *head = new_node;
         new_node->next = NULL;
+        return 0; // Pas de collision dans la liste chaînée
     } 
     else 
     {
         // Insertion au début
         new_node->next = *head;
         *head = new_node;
+        return 1; // Collision détectée dans la liste chaînée
     }
 
-    return 0;
+    return -2; // Erreur inconnue
 }
 
 
@@ -84,14 +86,15 @@ Table* init_table(void)
         return NULL;
     }
 
-    for (size_t i = 0; i < N; i++) 
+    table->size = 0;        // Nombre d'éléments initialisé à 0
+    table->capacity = TABLE_SIZE;    // Capacité égale au nombre de chaînes
+    table->collisions = 0;  // Initialiser le nombre de collisions à 0
+
+    for (size_t i = 0; i < TABLE_SIZE; i++) 
     {
         table->buckets[i] = NULL;  // Initialiser à NULL
     }
-
-    table->size = 0;        // Nombre d'éléments initialisé à 0
-    table->capacity = N;    // Capacité égale au nombre de chaînes
-    
+ 
     return table;
 }
 
@@ -149,11 +152,15 @@ int table_insert(Table* table, const Password pass0, const Password passL)
         }
 
         // Insérer le nouveau nœud dans la liste chaînée
-        return list_insert(&(table->buckets[index]), new_node);
+        if (list_insert(&(table->buckets[index]), new_node) == 1)  // Collision détectée dans la liste chaînée
+        {
+            table->collisions++; // Incrémenter le compteur de collisions
+        }
 
+        return 0; // Succès
     }
 
-    return -1; // Collision detecte
+    return -1; // Collision detecte entre deux passL identiques
 }
 
 
@@ -171,7 +178,7 @@ void free_table(Table** table_ptr)
     
 
     // Libérer chaque liste chaînée dans les buckets
-    for (size_t i = 0; i < N; i++) 
+    for (size_t i = 0; i < table->capacity; i++) 
     {
         free_list(table->buckets[i]);
     }

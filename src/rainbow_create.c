@@ -135,6 +135,10 @@ int fill_files(int len, char* files[])
         // Fermeture du fichier
         fclose(current_file);
 
+        printf("Table %d créée avec succès dans %s. Taille: %ld, Capacité: %ld, Collisions: %d = %d/%ld = (%.2f%%)\n\n", 
+               i+1, files[i], current_table->size, current_table->capacity, current_table->collisions, 
+               current_table->collisions, current_table->size, (float)current_table->collisions / current_table->size * 100);
+
         // Libération de la table courante
         free_table(&current_table);
 
