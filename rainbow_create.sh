@@ -1,19 +1,18 @@
 #!/bin/bash
 
 # rainbow_create.sh - Script pour créer des rainbow tables avec options
-# Usage: ./rainbow_create.sh <nb_tables> [pass_file] [output_dir]
+# Usage: ./rainbow_create.sh <nb_tables> [output_dir] [pass_file]
 
 # Si aucun argument, afficher l'aide
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <nb_tables> [pass_file] [output_dir]"
+    echo "Usage: $0 <nb_tables> [output_dir] [pass_file]"
     echo "  nb_tables: Nombre de rainbow tables à créer (ex: 10, 15, 20) doit être = R défini dans hash.h"
-    echo "  pass_file:  Fichier optionnel contenant les mots de passe initiaux (un par ligne)"
     echo "  output_dir: Répertoire optionnel pour stocker les fichiers de sortie (par défaut: ./Tables)"
+    echo "  pass_file:  Fichier optionnel contenant les mots de passe initiaux (un par ligne)"
     echo ""
     echo "Exemples:"
     echo "  $0 10                    # Créer 10 tables avec des mots de passe aléatoires dans ./Tables"
-    echo "  $0 15 passwords.txt      # Créer 15 tables en utilisant des mots de passe du fichier passwords.txt"
-    echo "  $0 20 passwords.txt data # Créer 20 tables dans le répertoire ./data en utilisant passwords.txt"
+    echo "  $0 20 data passwords.txt # Créer 20 tables dans le répertoire ./data en utilisant passwords.txt"
     exit 1
 fi
 
@@ -22,18 +21,21 @@ NUM_TABLES=$1
 PASS_FILE=""
 OUTPUT_DIR="Tables"  # Répertoire par défaut
 
-# Regarder si un fichier de mots de passe est fourni
+
+# Regarder si un répertoire de sortie est fourni
 if [ $# -ge 2 ]; then
-    PASS_FILE=$2
+    OUTPUT_DIR=$2
+fi
+
+
+# Regarder si un fichier de mots de passe est fourni
+if [ $# -ge 3 ]; then
+    PASS_FILE=$3
+    # Vérifier que le fichier de mots de passe existe
     if [ ! -f "$PASS_FILE" ]; then
         echo "Erreur : Le fichier de mots de passe '$PASS_FILE' n'existe pas!"
         exit 1
     fi
-fi
-
-# Regarder si un répertoire de sortie est fourni
-if [ $# -ge 3 ]; then
-    OUTPUT_DIR=$3
 fi
 
 # Créer le répertoire de sortie s'il n'existe pas

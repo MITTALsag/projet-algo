@@ -8,12 +8,12 @@
 /* Attaque des hashs dans le fichier attackme en utilisant les tables passées en paramètre
    et écriture des résultats dans le fichier result 
 */
-void attackme(char** files, int len, char* attackme, char* result) 
+int attackme(char** files, int len, char* attackme, char* result) 
 {
     if (len != R) 
     {
         printf("Il doit y avoir %d fichiers de tables passés en paramètre\n", R);
-        return;
+        return -1;
     }
 
     // initialisation 
@@ -27,7 +27,7 @@ void attackme(char** files, int len, char* attackme, char* result)
         if (fa) fclose(fa);
         if (fr) fclose(fr);
         free_rainbow_table(rt);
-        return;
+        return -1;
     }
 
     // on charge les tables dans la Rainbow Table
@@ -40,7 +40,7 @@ void attackme(char** files, int len, char* attackme, char* result)
             fclose(fa);
             fclose(fr);
             free_rainbow_table(rt);
-            return;
+            return -1;
         }
         rainbowtable_insert(rt, t);
     }
@@ -53,7 +53,7 @@ void attackme(char** files, int len, char* attackme, char* result)
     int found_count = 0;
 
     // Pour chaque hash dans le fichier attackme
-    while (fscanf(fa, "%lX", &h) != EOF)
+    while (fscanf(fa, "%llX", &h) != EOF)
     {
         total_hashes++;
 
@@ -117,12 +117,9 @@ void attackme(char** files, int len, char* attackme, char* result)
                             rt->reductions(test_hash, pos, 26, abc, temp_pwd);
                         }
                     }
-                    
-                    // si on a trouvé avec ce candidat, on sort de la boucle des candidats
-                    if (found) break;
                 }
-                
-                free(candidates);
+
+                free_candidate_list(candidates);
             }
         }
 
@@ -139,6 +136,8 @@ void attackme(char** files, int len, char* attackme, char* result)
     fclose(fa);
     fclose(fr);
     free_rainbow_table(rt);
+
+    return 0;
 }
 
 
@@ -147,7 +146,6 @@ int main(int argc, char* argv[])
 {
     int nb_files = argc - 1; // Sans le nom du programme
 
-    attackme(argv+1, nb_files-2, argv[argc-2], argv[argc-1]);
+    return attackme(argv+1, nb_files-2, argv[argc-2], argv[argc-1]);
 
-    return 0;
 }

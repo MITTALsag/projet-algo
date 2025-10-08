@@ -225,6 +225,51 @@ Table* create_table(char* file)
 }
 
 
+/*=======================================================================================================*/
+/* CANDIDATE LIST */
+
+/* Initialisation de la liste de candidats */
+CandidateList* init_candidate_list(void)
+{
+    CandidateList* list = (CandidateList*)malloc(sizeof(CandidateList));
+    
+    if (!list) 
+    {
+        return NULL; // Échec de l'allocation
+    }
+    
+    list->count = 0; // Initialiser le compteur à 0
+    return list;
+}
+
+/* Ajout d'un candidat à la liste */
+int list_candidates_add(CandidateList* list, const Password pass0)
+{
+    if (!list || !pass0) 
+    {
+        return -1; // Erreur de paramètres
+    }  
+
+    if (list->count >= MAX_CANDIDATES) 
+    {
+        return -2; // Liste pleine
+    }
+
+    strcpy(list->candidates[list->count], pass0);
+    list->count++;
+    return 0; // Succès
+}
+
+/* Libération de la liste de candidats */
+void free_candidate_list(CandidateList* list)
+{
+    if (list)
+    {
+        free(list);
+    }
+}
+
+
 
 /*=======================================================================================================*/
 /* Rainbow Table */
@@ -303,32 +348,39 @@ CandidateList* rainbow_find(RainbowTable* rt, Password passL)
         return NULL;
     }
 
-    CandidateList* list = (CandidateList*)malloc(sizeof(CandidateList));
-    if (!list) 
+    CandidateList* list_candidates = init_candidate_list();
+    if (!list_candidates)
     {
-        return NULL;
+        return NULL; // Échec de l'allocation
     }
-    
-    list->count = 0;
 
     // parcourt toutes les tables pour collecter tous les candidats
-    for (int i = 0; i < rt->idx && list->count < MAX_CANDIDATES; i++)
+    for (int i = 0; i < rt->idx && list_candidates->count < MAX_CANDIDATES; i++)
     {
         Table* current_table = rt->tables[i];
-        pwhash index = target_hash_function(passL) % current_table->capacity;
-        Node* current = current_table->buckets[index];
-        
-        // parcourt toute la liste chaînée du bucket
-        while (current && list->count < MAX_CANDIDATES)
+
+
+        Node* node = table_find(current_table, passL);
+
+        if (node)
         {
-            if (strcmp(current->passL, passL) == 0) 
-            {
-                strcpy(list->candidates[list->count], current->pass0);
-                list->count++;
-            }
-            current = current->next;
+            list_candidates_add(list_candidates, node->pass0);
         }
+
+        // pwhash index = target_hash_function(passL) % current_table->capacity;
+        // Node* current = current_table->buckets[index];
+        
+        // // parcourt toute la liste chaînée du bucket
+        // while (current && list->count < MAX_CANDIDATES)
+        // {
+        //     if (strcmp(current->passL, passL) == 0) 
+        //     {
+        //         strcpy(list->candidates[list->count], current->pass0);
+        //         list->count++;
+        //     }
+        //     current = current->next;
+        // }
     }
 
-    return list;
+    return list_candidates;
 }

@@ -51,13 +51,17 @@ Table* create_table(char* file);
 /*=======================================================================================================*/
 
 /* Type pour stocker plusieurs candidats lors de la recherche */
-#define MAX_CANDIDATES 100  // Nombre maximum de candidats à tester par passL
+#define MAX_CANDIDATES R  // Nombre maximum de candidats à tester par passL
 
 typedef struct CandidateList 
 {
     Password candidates[MAX_CANDIDATES];  // Liste des pass0 possibles
     int count;                            // Nombre de candidats trouvés
 } CandidateList;
+
+
+/* Libération de la liste de candidats */
+void free_candidate_list(CandidateList* list);
 
 /*=======================================================================================================*/
 

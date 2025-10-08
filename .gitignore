@@ -1,10 +1,4 @@
-files/
-Tables/
-CRACK
-MDP
+# Fichiers à ignorer par Git
 **/*.o
-rainbow_create
-rainbow_attack
-hash_many
-justhash
-result.txt
+**/*.txt
+exec/

@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         pwhash hash = target_hash_function(password);
         
         // Écriture du hash dans le fichier de sortie
-        fprintf(output_file, "%016lX\n", (uint64_t)hash);
+        fprintf(output_file, "%016llX\n", (uint64_t)hash);
         count++;
     }
 
